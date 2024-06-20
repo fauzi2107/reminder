@@ -1,4 +1,5 @@
 import 'package:reminder/features/home/presentation/bloc/home_bloc.dart';
+import 'package:reminder/features/home/presentation/widgets/home_item.dart';
 
 import '../../../ui_export.dart';
 
@@ -33,6 +34,12 @@ class _HomeScreenState extends State<HomeScreen> {
               onRefresh: () async => doRefresh(ctx),
               child: Builder(
                 builder: (context) {
+                  if (state.isLoading && state.data.isEmpty) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+
                   if (state.data.isEmpty) {
                     return const Center(
                       child: MyText('Please Create New Reminder'),
@@ -43,20 +50,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: const EdgeInsets.all(20),
                     itemCount: state.data.length,
                     separatorBuilder: (ctx, i) => const Divider(
-                      height: 6,
+                      height: 12,
                     ),
                     itemBuilder: (ctx, i) {
                       final item = state.data[i];
-                      return Container(
-                        decoration: BoxDecoration(
-                            color: Colors.black12,
-                            borderRadius: BorderRadius.circular(8)
-                        ),
-                        padding: const EdgeInsets.all(12),
-                        child: MyText(item.reminderTime,
-                          fontSize: 14,
-                        ),
-                      );
+                      return HomeItem(item: item);
                     },
                   );
                 }
