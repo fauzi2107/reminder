@@ -5,6 +5,8 @@ export 'dart:convert';
 export 'dart:typed_data';
 export 'package:flutter/services.dart';
 export 'package:flutter_bloc/flutter_bloc.dart';
+export 'package:permission_handler/permission_handler.dart';
+export 'package:device_info_plus/device_info_plus.dart';
 
 // widgets
 export 'ui/theme/my_theme.dart';

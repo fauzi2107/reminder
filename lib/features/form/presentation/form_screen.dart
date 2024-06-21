@@ -12,7 +12,7 @@ class FormScreen extends StatefulWidget {
 class _FormScreenState extends State<FormScreen> {
 
   late String isDay;
-  String hour = '00', minutes = '00';
+  String hour = '0', minutes = '0';
 
   @override
   void initState() {
@@ -22,85 +22,89 @@ class _FormScreenState extends State<FormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(20),
-      shrinkWrap: true,
-      children: [
-        const Align(
-          alignment: Alignment.center,
-          child: MyText('Add Reminder',
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-            margin: EdgeInsets.only(bottom: 20),
-          ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            SelectionWidget(
-              itemLength: 12,
-              onItemChanged: (value) {
-                hour = '$value';
-              },
-            ),
-            SelectionWidget(
-              itemLength: 60,
-              onItemChanged: (value) => minutes = '$value',
-            ),
-            Column(
-              children: ['AM','PM'].map((e) {
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      isDay = e;
-                    });
-                  },
-                  child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: isDay == e ? Colors.grey.shade400 : null
-                      ),
-                      padding: const EdgeInsets.all(6),
-                      child: MyText(e,
-                        fontSize: 22,
-                      )
-                  ),
-                );
-              }).toList(),
-            )
-          ],
-        ),
-        Container(
-          margin: const EdgeInsets.only(top: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+    return BlocProvider<FormBloc>(
+      create: (_) => FormBloc(true),
+      child: BlocBuilder<FormBloc, bool>(
+        builder: (context, state) {
+          return ListView(
+            padding: const EdgeInsets.all(20),
+            shrinkWrap: true,
             children: [
-              MyButton(
-                onPressed: () => locator<NavigationHandler>().pop(),
-                color: Colors.red,
-                child: const MyText('Cancel',
-                  fontSize: 14,
-                  color: Colors.white,
+              const Align(
+                alignment: Alignment.center,
+                child: MyText('Add Reminder',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  margin: EdgeInsets.only(bottom: 20),
                 ),
               ),
-              MyButton(
-                onPressed: isSaveEnable ? () async {
-                  await DbHelper.instance.add(ReminderModel(
-                    reminderTime: '$hour:$minutes $isDay'
-                  ).toJson).whenComplete(() {
-                    locator<NavigationHandler>().pop();
-                  });
-                } : null,
-                color: Colors.green,
-                child: const MyText('Save',
-                  fontSize: 14,
-                  color: Colors.white,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  SelectionWidget(
+                    itemLength: 12,
+                    onItemChanged: (value) {
+                      hour = '$value';
+                    },
+                  ),
+                  SelectionWidget(
+                    itemLength: 60,
+                    onItemChanged: (value) => minutes = '$value',
+                  ),
+                  Column(
+                    children: ['AM','PM'].map((e) {
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isDay = e;
+                          });
+                        },
+                        child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                color: isDay == e ? Colors.grey.shade400 : null
+                            ),
+                            padding: const EdgeInsets.all(6),
+                            child: MyText(e,
+                              fontSize: 22,
+                            )
+                        ),
+                      );
+                    }).toList(),
+                  )
+                ],
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    MyButton(
+                      onPressed: () => sl<NavigationHandler>().pop(),
+                      color: Colors.red,
+                      child: const MyText('Cancel',
+                        fontSize: 14,
+                        color: Colors.white,
+                      ),
+                    ),
+                    MyButton(
+                      onPressed: isSaveEnable ? () {
+                        context.read<FormBloc>()
+                            .add(AddReminderEvent('$hour:$minutes $isDay'));
+                      } : null,
+                      color: Colors.green,
+                      child: const MyText('Save',
+                        fontSize: 14,
+                        color: Colors.white,
+                      ),
+                    )
+                  ],
                 ),
               )
             ],
-          ),
-        )
-      ],
+          );
+        }
+      ),
     );
   }
 

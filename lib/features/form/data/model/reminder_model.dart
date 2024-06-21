@@ -1,4 +1,5 @@
 class ReminderModel {
+  final String? id;
   final String reminderTime;
   final DateTime? createdAt;
   final DateTime? updatedAt;
@@ -8,6 +9,7 @@ class ReminderModel {
   static const columnUpdatedAt = 'updated_at';
 
   ReminderModel({
+    this.id,
     required this.reminderTime,
     this.createdAt,
     this.updatedAt
@@ -15,6 +17,7 @@ class ReminderModel {
 
   factory ReminderModel.fromJson(Map<String, dynamic> json) {
     return ReminderModel(
+      id: '${json['id']}',
       reminderTime: json[columnReminderTime],
       createdAt: DateTime.tryParse(json[columnCreatedAt] ?? ''),
       updatedAt: DateTime.tryParse(json[columnUpdatedAt] ?? '')
@@ -23,7 +26,9 @@ class ReminderModel {
 
   Map<String, dynamic> get toJson => {
     columnReminderTime: reminderTime,
-    columnCreatedAt: createdAt,
-    columnUpdatedAt: updatedAt
+    columnCreatedAt: createdAt ?? '${DateTime.now()}',
+    columnUpdatedAt: updatedAt,
+    if ((id ?? '').isNotEmpty)
+      'id': id
   };
 }

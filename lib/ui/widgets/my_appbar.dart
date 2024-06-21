@@ -36,7 +36,7 @@ class MyAppbar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: bgColor,
       leading: !showLeading ? null : leading ?? MyBackButton(
         onPressed: onBackPressed ??
-                () => locator<NavigationHandler>().pop(),
+                () => sl<NavigationHandler>().pop(),
       ),
       systemOverlayStyle: systemUiOverlayStyle ??
           SystemUiOverlayStyle.light.copyWith(

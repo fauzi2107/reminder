@@ -47,7 +47,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   }
 
                   return ListView.separated(
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(20).copyWith(
+                      bottom: 100
+                    ),
                     itemCount: state.data.length,
                     separatorBuilder: (ctx, i) => const Divider(
                       height: 12,

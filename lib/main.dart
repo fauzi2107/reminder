@@ -1,8 +1,11 @@
+import 'handler/push_notif/push_notif.dart';
 import 'ui_export.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   // do initialize setup locator
-  setupLocator();
+  await setupLocator();
 
   runApp(const MyApp());
 }
@@ -16,7 +19,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Test',
       theme: AppTheme.light,
-      navigatorKey: locator<NavigationHandler>().navKey,
+      navigatorKey: sl<NavigationHandler>().navKey,
       onGenerateRoute: onGenerateRoute,
       onGenerateTitle: (ctx) => 'Reminder',
     );
