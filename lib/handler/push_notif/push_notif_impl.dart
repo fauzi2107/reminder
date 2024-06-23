@@ -72,7 +72,8 @@ class PushNotificationImpl implements PushNotification {
         'Reminder of ${data.reminderTime}',
         tz.TZDateTime.from(DateTime.now().copyWith(
           hour: int.parse(times.first),
-          minute: int.parse(times.last)
+          minute: int.parse(times.last),
+          second: 0
         ), tz.getLocation('Asia/Jakarta')),
         const NotificationDetails(
           android: AndroidNotificationDetails(
