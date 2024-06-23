@@ -1,9 +1,9 @@
 import '../../../ui_export.dart';
 
 class FormScreen extends StatefulWidget {
-  static const routeName = '/form_screen';
+  const FormScreen({super.key, this.data});
 
-  const FormScreen({super.key});
+  final ReminderModel? data;
 
   @override
   State<FormScreen> createState() => _FormScreenState();
@@ -11,14 +11,7 @@ class FormScreen extends StatefulWidget {
 
 class _FormScreenState extends State<FormScreen> {
 
-  late String isDay;
-  String hour = '0', minutes = '0';
-
-  @override
-  void initState() {
-    isDay = DateTime.now().hour <= 12 ? 'AM' : 'PM';
-    super.initState();
-  }
+  String hour = '00', minutes = '00';
 
   @override
   Widget build(BuildContext context) {
@@ -42,36 +35,19 @@ class _FormScreenState extends State<FormScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   SelectionWidget(
-                    itemLength: 12,
+                    title: 'Hour',
+                    itemLength: 24,
                     onItemChanged: (value) {
-                      hour = '$value';
+                      hour = value >= 10 ? '$value' : '0$value';
                     },
                   ),
                   SelectionWidget(
+                    title: 'Minutes',
                     itemLength: 60,
-                    onItemChanged: (value) => minutes = '$value',
+                    onItemChanged: (value) {
+                      minutes = value >= 10 ? '$value' : '0$value';
+                    },
                   ),
-                  Column(
-                    children: ['AM','PM'].map((e) {
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            isDay = e;
-                          });
-                        },
-                        child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                color: isDay == e ? Colors.grey.shade400 : null
-                            ),
-                            padding: const EdgeInsets.all(6),
-                            child: MyText(e,
-                              fontSize: 22,
-                            )
-                        ),
-                      );
-                    }).toList(),
-                  )
                 ],
               ),
               Container(
@@ -90,7 +66,7 @@ class _FormScreenState extends State<FormScreen> {
                     MyButton(
                       onPressed: isSaveEnable ? () {
                         context.read<FormBloc>()
-                            .add(AddReminderEvent('$hour:$minutes $isDay'));
+                            .add(AddReminderEvent('$hour:$minutes'));
                       } : null,
                       color: Colors.green,
                       child: const MyText('Save',

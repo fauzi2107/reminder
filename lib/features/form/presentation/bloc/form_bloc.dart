@@ -1,3 +1,4 @@
+import 'package:reminder/handler/push_notif/push_notif.dart';
 import 'package:reminder/ui_export.dart';
 
 part 'form_event.dart';
@@ -10,9 +11,9 @@ class FormBloc extends Bloc<FormEvent, bool> {
 
   /// Add/Insert new reminder to local database
   Future _addReminder(AddReminderEvent event, Emitter emit) async {
-    await DbHelper.instance.add(ReminderModel(
-        reminderTime: event.reminder
-    ).toJson).whenComplete(() {
+    final data = ReminderModel(reminderTime: event.reminder);
+    await DbHelper.instance.add(data.toJson).whenComplete(() async {
+      sl<PushNotification>().scheduleNotification(data);
       sl<NavigationHandler>().pop();
     });
   }

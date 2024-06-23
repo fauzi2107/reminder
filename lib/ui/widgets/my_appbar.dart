@@ -39,7 +39,7 @@ class MyAppbar extends StatelessWidget implements PreferredSizeWidget {
                 () => sl<NavigationHandler>().pop(),
       ),
       systemOverlayStyle: systemUiOverlayStyle ??
-          SystemUiOverlayStyle.light.copyWith(
+          SystemUiOverlayStyle.dark.copyWith(
             statusBarColor: bgColor ?? Colors.white,
           ),
       actions: actions,

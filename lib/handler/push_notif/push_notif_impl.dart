@@ -1,6 +1,8 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:reminder/features/form/data/model/reminder_model.dart';
 import 'package:reminder/handler/permission_handler.dart';
 import 'package:reminder/handler/push_notif/push_notif.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 class PushNotificationImpl implements PushNotification {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
@@ -11,6 +13,7 @@ class PushNotificationImpl implements PushNotification {
   Future init() async {
     // do request notification permission
     await PermissionHandler().notification();
+    await PermissionHandler().alarm();
 
     const initializeAndroid = AndroidInitializationSettings('ic_launcher');
     final initializationSettingsDarwin = DarwinInitializationSettings(
@@ -37,22 +40,18 @@ class PushNotificationImpl implements PushNotification {
         androidChannel.id,
         androidChannel.name,
         icon: 'ic_launcher',
-        // color: MyColor.primary,
         autoCancel: true,
-        // styleInformation: BigTextStyleInformation(notificationBody),
         priority: Priority.high,
         importance: Importance.max,
         playSound: true,
-        // sound: RawResourceAndroidNotificationSound('notification'),
       ),
       iOS: const DarwinNotificationDetails(
           presentAlert: true,
           presentBadge: true,
           presentSound: true,
-          // attachments: iosNotifAttach,
-          // sound: 'notification.wav'
       ),
     );
+
     flutterLocalNotificationsPlugin.show(
         id, title, body, notificationDetails, payload: payload);
   }
@@ -61,6 +60,26 @@ class PushNotificationImpl implements PushNotification {
   Future onTapNotification(NotificationResponse response) {
     // TODO: implement onTapNotification
     throw UnimplementedError();
+  }
+
+  @override
+  Future scheduleNotification(ReminderModel data) async {
+    final times = data.reminderTime.split(' ').first.split(':');
+
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+        int.tryParse(data.id ?? '') ?? 0,
+        'Reminder',
+        'Reminder of ${data.reminderTime}',
+        tz.TZDateTime.from(DateTime.now().copyWith(
+          hour: int.parse(times.first),
+          minute: int.parse(times.last)
+        ), tz.getLocation('Asia/Jakarta')),
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+              'your channel id', 'your channel name',
+              channelDescription: 'your channel description')),
+        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime
+    );
   }
 }
 

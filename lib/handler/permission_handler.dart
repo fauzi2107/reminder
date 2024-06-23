@@ -20,6 +20,24 @@ class PermissionHandler {
     }
   }
 
+  /// request alarm permission
+  Future<bool> alarm() async {
+    if (!(await isAndroid13())) return false;
+
+    try {
+      const permission = Permission.scheduleExactAlarm;
+      var status = await permission.status;
+
+      if (!status.isGranted) {
+        status = await permission.request();
+      }
+
+      return status.isGranted;
+    } catch (e) {
+      return false;
+    }
+  }
+
   /// func to detect isAndroid 13
   Future<bool> isAndroid13() async {
     if (Platform.isIOS) return false;
